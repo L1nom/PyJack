@@ -154,7 +154,6 @@ def dealer_ai(dealer_cards, p_val, deck):
     if dealer_value <= p_val and dealer_value <= 17:
         dealer_cards, deck = hit_player(dealer_cards, deck)
         return dealer_ai(dealer_cards, p_val, deck)
-    return dealer_value
 
 
 def show_messages(m, xy):
