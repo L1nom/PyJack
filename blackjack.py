@@ -1,6 +1,8 @@
 import sys
 import pygame
 import random
+
+import pytest
 from pynput.keyboard import Controller
 from time import sleep
 
@@ -26,10 +28,10 @@ CARD_HEIGHT = 225
 
 pygame.font.init()
 FONT = pygame.font.SysFont('Ariel', 30)
-CONTROLS = FONT.render("Controls:", True, (0, 0, 0))
-HIT = FONT.render("[H]IT", True, (0, 0, 0))
-STAY = FONT.render("[S]TAY", True, (0, 0, 0))
-NEW_GAME = FONT.render("[N]EW GAME", True, (0, 0, 0))
+CONTROLS = FONT.render("Controls:", True, (255, 255, 255))
+HIT = FONT.render("[H]IT", True, (255, 255, 255))
+STAY = FONT.render("[S]TAY", True, (255, 255, 255))
+NEW_GAME = FONT.render("[N]EW GAME", True, (255, 255, 255))
 
 BG = pygame.transform.scale(pygame.image.load("images/background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -64,11 +66,7 @@ cards_dict = {"A": card_A,
 
 
 def check_blackjack(val):
-    if val == 21:
-        message = "You got BlackJack! You WIN!"
-        show_messages(message, M1_POS)
-        keyboard.press("n")
-        keyboard.release("n")
+    return val == 21
 
 
 def draw_board():
@@ -77,10 +75,14 @@ def draw_board():
     screen.blit(HIT, (1000, 300))
     screen.blit(STAY, (1000, 350))
     screen.blit(NEW_GAME, (1000, 400))
+    pygame.display.update()
+    return True
 
 
 def peek_ai_cards(ai_hand):
     screen.blit(cards_dict[ai_hand[-1]], (AI_START_POS[0], AI_START_POS[1]))
+    pygame.display.update()
+    return True
 
 
 def draw_ai_cards(ai_hand):
@@ -90,6 +92,7 @@ def draw_ai_cards(ai_hand):
         offset += 30
     pygame.display.update()
     sleep(0.25)
+    return True
 
 
 def draw_player_cards(player_hand):
@@ -97,13 +100,15 @@ def draw_player_cards(player_hand):
     for card in player_hand:
         screen.blit(cards_dict[card], (PLAYER_START_POS[0] + offset, PLAYER_START_POS[1]))
         offset += 30
+    pygame.display.update()
+    return True
 
 
 def draw(player, ai, deck):
     for i in range(2):
         player.append(deck.pop())
         ai.append(deck.pop())
-    return player, ai
+    return player, ai, deck
 
 
 def hit_player(player_hand, deck):
@@ -157,10 +162,11 @@ def dealer_ai(dealer_cards, p_val, deck):
 
 
 def show_messages(m, xy):
-    message = FONT.render(m, True, (0, 0, 0))
+    message = FONT.render(m, True, (255, 255, 255))
     screen.blit(message, xy)
     pygame.display.update()
     sleep(2)
+    return True
 
 
 def check_win(ai, player):
@@ -181,11 +187,15 @@ def game():
     random.shuffle(card_deck)
     player_cards = []
     ai_cards = []
-    player_cards, ai_cards = draw(player_cards, ai_cards, card_deck)
+    player_cards, ai_cards, card_deck = draw(player_cards, ai_cards, card_deck)
     draw_player_cards(player_cards)
     peek_ai_cards(ai_cards)
     player_total = get_value(player_cards)
-    check_blackjack(player_total)
+    if check_blackjack(player_total):
+        message = "You got BlackJack! You WIN!"
+        show_messages(message, M1_POS)
+        keyboard.press("n")
+        keyboard.release("n")
 
     run_game = True
 
