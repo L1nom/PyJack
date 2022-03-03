@@ -60,22 +60,27 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(check_win(19, 20), "You win! Dealer has lower hand value")
 
     def test_draw_board(self):
+        # draw our board
         self.assertEqual(draw_board(), True)
         sleep(0.5)
 
     def test_peek_ai_cards(self):
+        # draw 1 card from ai hand
         self.assertEqual((peek_ai_cards(["A", 5])), True)
         sleep(0.5)
 
     def test_draw_ai_cards(self):
+        # draw full ai hand
         self.assertEqual((draw_ai_cards(["A", 5])), True)
         sleep(0.5)
 
     def test_draw_player_cards(self):
+        # draw full player hand
         self.assertEqual((draw_player_cards(["A", 5])), True)
         sleep(0.5)
 
     def test_show_message(self):
+        # draw message on screen given coordinates
         self.assertEqual((show_messages("Test message", (400, 50))), True)
         sleep(0.5)
 
